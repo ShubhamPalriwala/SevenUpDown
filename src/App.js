@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Game } from "./Game";
+import { bgColor, primaryColor, secondaryColor, textColor } from "./colors";
 
 const App = () => {
   const [input, setInput] = useState(null);
@@ -13,27 +14,38 @@ const App = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white p-8">
-      <div className="max-w-lg w-full text-center">
-        <h2 className="text-3xl font-bold mb-6">Seven Up Seven Down Game</h2>
-        <div className="mb-6 flex justify-center gap-4">
+    <div
+      style={{
+        backgroundColor: bgColor,
+        color: textColor,
+        fontFamily: "Inter, sans-serif",
+      }}
+      className="flex flex-col justify-between min-h-screen p-8"
+    >
+      <div className="flex flex-col items-center justify-center flex-grow">
+        <h2 className="text-3xl font-bold mb-6">Seven Up or Seven Down</h2>
+        <div className="flex justify-center gap-4">
           <button
-            className={`py-2 px-4 rounded font-bold ${
-              input === "up" && !loading ? "bg-blue-700" : "bg-blue-600"
-            } hover:bg-blue-700 disabled:bg-blue-200 disabled:cursor-not-allowed`}
+            style={{
+              backgroundColor:
+                input === "up" && !loading ? primaryColor : secondaryColor,
+            }}
+            className={`py-2 px-4 rounded text-black hover:bg-opacity-90 disabled:bg-opacity-50 disabled:cursor-not-allowed`}
             onClick={() => handleButtonSelect("up")}
             disabled={loading}
           >
-            {!loading ? "Up" : "Loading..."}
+            Up
           </button>
           <button
-            className={`py-2 px-4 rounded font-bold ${
-              input === "down" && !loading ? "bg-blue-700" : "bg-blue-600"
-            } hover:bg-blue-700 disabled:bg-blue-200 disabled:cursor-not-allowed`}
+            style={{
+              backgroundColor:
+                input === "down" && !loading ? primaryColor : secondaryColor,
+            }}
+            className={`py-2 px-4 rounded text-black hover:bg-opacity-90 disabled:bg-opacity-50 disabled:cursor-not-allowed`}
             onClick={() => handleButtonSelect("down")}
             disabled={loading}
           >
-            {!loading ? "Down" : "Loading..."}
+            Down
           </button>
         </div>
         <Game
@@ -42,6 +54,19 @@ const App = () => {
           loading={loading}
           setLoading={setLoading}
         />
+      </div>
+      <div className="text-center" style={{ color: primaryColor }}>
+        <p>
+          Built with{" "}
+          <a
+            style={{ color: textColor }}
+            href="https://soroban.stellar.org/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Soroban
+          </a>{" "}
+        </p>
       </div>
     </div>
   );
