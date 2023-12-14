@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Generates the bindings for the seven-up-seven-down contract in the form of an npm package that can be imported by React
 soroban contract bindings typescript \
     --network futurenet \
     --contract-id $(cat contract-src/.soroban/seven-up-seven-down) \

@@ -9,6 +9,7 @@ import {
 } from "./colors";
 
 export const Game = ({ input, loading, setLoading }) => {
+  // Define the Contract object with the nectwork, the rpc to communicate with the network and the contractId
   const upOrDown = new Contract({
     contractId: networks.futurenet.contractId,
     networkPassphrase: networks.futurenet.networkPassphrase,
@@ -37,6 +38,7 @@ export const Game = ({ input, loading, setLoading }) => {
   const renderGameResult = () => {
     if (!gambled) return null;
 
+    // Parse the vector received from the contract
     const parts = gambled.split(" ");
     const [firstWord, resultWord, , , , , , number] = parts;
 
@@ -63,6 +65,7 @@ export const Game = ({ input, loading, setLoading }) => {
       {loading && (
         <div className="text-center">
           <div role="status">
+            {/* Loader SVG*/}
             <svg
               aria-hidden="true"
               class="w-8 h-8 animate-spin fill-[#f9db4a]"

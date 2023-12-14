@@ -1,3 +1,4 @@
+// We use the Soroban color palette to style our app.
 export const bgColor = "#222222";
 export const primaryColor = "#f9db4a";
 export const secondaryColor = "#4daaa9";

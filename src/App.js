@@ -3,6 +3,7 @@ import { Game } from "./Game";
 import { bgColor, primaryColor, secondaryColor, textColor } from "./colors";
 
 const App = () => {
+  // We define the below states to keep track of the user's input, game's key to make sure it isnt cached anytime and loading state
   const [input, setInput] = useState(null);
   const [gameKey, setGameKey] = useState(0);
   const [loading, setLoading] = useState(false);
