@@ -39,7 +39,6 @@ export const Game = ({ input, loading, setLoading }) => {
 
     const parts = gambled.split(" ");
     const [firstWord, resultWord, , , , , , number] = parts;
-    console.log(resultWord);
 
     return (
       <>

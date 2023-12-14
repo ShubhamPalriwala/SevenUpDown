@@ -15,9 +15,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "./installer.sh",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "soroban contract bindings typescript --network futurenet --contract-id $(cat ./contract-src/.soroban/seven-up-seven-down) --output-dir node_modules/seven-up-seven-down"
   },
   "eslintConfig": {
     "extends": [
