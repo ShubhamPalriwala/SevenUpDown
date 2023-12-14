@@ -1,70 +1,125 @@
-# Getting Started with Create React App
+# Seven Up Seven Down
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![Banner](./public/header.png)
 
-## Available Scripts
+<p align="center">
+React | Tailwind | Soroban
+</p>
 
-In the project directory, you can run:
+## How to Play
 
-### `npm start`
+Predict whether the sum of two dice will be greater than or less than 7 on Soroban (Japanese abacus).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The Smart contract can be viewed [here](./contract-src/src/lib.rs).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Requirements
 
-### `npm test`
+1. [Node.js](https://nodejs.org/en/)
+2. [Soroban CLI]()
+3. [Rust](https://www.rust-lang.org/tools/install)
+4. [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Running the App Locally:
 
-### `npm run build`
+```bash
+npm i
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Steps Involved in Integrating a Soroban Smart Contract with a React App
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Install Rust & Wasm32 Target
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rustup target add wasm32-unknown-unknown
+```
 
-### `npm run eject`
+1. Install Soroban CLI
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+cargo install --locked --version 20.0.0-rc.4.1 soroban-cli
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Configure the Futurenet:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+soroban config network add --global futurenet \
+  --rpc-url https://rpc-futurenet.stellar.org \
+  --network-passphrase "Test SDF Future Network ; October 2022"
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. Create an Identity on the Futurenet:
 
-## Learn More
+```bash
+soroban config identity generate --global <your-name>
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Store the address of the account generated above:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+soroban config identity address <your-name>
+```
 
-### Code Splitting
+1. Fund the address with text XLMs:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+soroban config identity fund <address-found-above> --network futurenet
+```
 
-### Analyzing the Bundle Size
+1. Compile the Contract to a release wasm
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+cd contract-src
+cargo build --target wasm32-unknown-unknown --release
+```
 
-### Making a Progressive Web App
+1. Deploy the Contract to Futurenet & store the contract address:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+soroban contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/seven_up_seven_down.wasm \
+  --source <your-name> \
+  --network futurenet > .soroban/seven-up-seven-down
+```
 
-### Advanced Configuration
+1. Test the Contract by Invoking it from the CLI:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+soroban contract invoke \
+  --id $(cat .soroban/seven-up-seven-down) \
+  --source <your-name> \
+  --network futurenet \
+  -- \
+  play \
+  --prediction down
+```
+And the output should be something like: `["You","won","with","down","as","number","was","1"]`.
 
-### Deployment
+1. Now to integrate this with the React App, we need to generate bindings for the contract:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+cd ..
+soroban contract bindings typescript \
+  --network futurenet \
+  --contract-id $(cat ./contract-src/.soroban/seven-up-seven-down) \
+  --output-dir node_modules/seven-up-seven-down
+```
 
-### `npm run build` fails to minify
+The above should create an npm module in the `node_modules` directory.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. Install dependencies in the React App
+
+```bash
+npm install
+```
+
+1. Start the app
+
+```bash
+npm start
+```
+
+## Debugging
+
+If you run into any versioning errors on the browser or something like "Maximum TTL reached", please run the helper script [./update-stellar-sdk.sh](./update-stellar-sdk.sh) and then start the app again!
