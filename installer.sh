@@ -5,4 +5,3 @@ rustup target add wasm32-unknown-unknown
 cargo install --locked --version 20.0.0-rc.4.1 soroban-cli
 
 npm run build
-npm run start
